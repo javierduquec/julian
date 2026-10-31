@@ -1,17 +1,25 @@
 /**
  * LEGAL & BUSINESS - JULIÁN FAJARDO
+<<<<<<< HEAD
  * UI/UX Pro Max Engine: Client-Side Interactivity, Responsive Logic,
  * Motion Library Spring Dynamics & Micro-Interactions (motion.dev)
  */
 
 document.addEventListener('DOMContentLoaded', () => {
   initMotionAnimations();
+=======
+ * Client-Side Interactivity, Responsive Logic & Diagnostic Assessment Tool
+ */
+
+document.addEventListener('DOMContentLoaded', () => {
+>>>>>>> c76677fb61e4c4441ab9ab5d88821cd083e7231c
   initMobileMenu();
   initHeaderScroll();
   initSmoothScroll();
 });
 
 /* -------------------------------------------------------------
+<<<<<<< HEAD
  * 1. Motion Library Spring Dynamics & Micro-Interactions
  * ------------------------------------------------------------- */
 function initMotionAnimations() {
@@ -91,6 +99,9 @@ function initMotionAnimations() {
 
 /* -------------------------------------------------------------
  * 2. Mobile Drawer Navigation
+=======
+ * 1. Mobile Drawer Navigation
+>>>>>>> c76677fb61e4c4441ab9ab5d88821cd083e7231c
  * ------------------------------------------------------------- */
 function initMobileMenu() {
   const menuBtn = document.getElementById('mobileMenuBtn');
@@ -103,6 +114,7 @@ function initMobileMenu() {
     const isHidden = drawer.classList.contains('hidden');
     if (isHidden) {
       drawer.classList.remove('hidden');
+<<<<<<< HEAD
       menuBtn.setAttribute('aria-expanded', 'true');
       if (typeof window.Motion !== 'undefined') {
         window.Motion.animate(drawer, { opacity: [0, 1], y: [-15, 0] }, { type: "spring", stiffness: 350, damping: 25 });
@@ -117,19 +129,30 @@ function initMobileMenu() {
         drawer.classList.add('hidden');
         menuBtn.setAttribute('aria-expanded', 'false');
       }
+=======
+    } else {
+      drawer.classList.add('hidden');
+>>>>>>> c76677fb61e4c4441ab9ab5d88821cd083e7231c
     }
   });
 
   links.forEach(link => {
     link.addEventListener('click', () => {
       drawer.classList.add('hidden');
+<<<<<<< HEAD
       menuBtn.setAttribute('aria-expanded', 'false');
+=======
+>>>>>>> c76677fb61e4c4441ab9ab5d88821cd083e7231c
     });
   });
 }
 
 /* -------------------------------------------------------------
+<<<<<<< HEAD
  * 3. Sticky Header Blur & Dynamic Styling on Scroll
+=======
+ * 2. Sticky Header Blur & Shadow on Scroll
+>>>>>>> c76677fb61e4c4441ab9ab5d88821cd083e7231c
  * ------------------------------------------------------------- */
 function initHeaderScroll() {
   const header = document.querySelector('.site-header');
@@ -137,6 +160,7 @@ function initHeaderScroll() {
 
   window.addEventListener('scroll', () => {
     if (window.scrollY > 40) {
+<<<<<<< HEAD
       header.classList.add('shadow-2xl', 'bg-[#0B1320]/95', 'py-1');
       header.classList.remove('bg-primary/85');
     } else {
@@ -148,6 +172,19 @@ function initHeaderScroll() {
 
 /* -------------------------------------------------------------
  * 4. Smooth Scrolling for Internal Links
+=======
+      header.classList.add('shadow-xl', 'bg-primary/98');
+      header.classList.remove('bg-primary/95');
+    } else {
+      header.classList.remove('shadow-xl', 'bg-primary/98');
+      header.classList.add('bg-primary/95');
+    }
+  });
+}
+
+/* -------------------------------------------------------------
+ * 3. Smooth Scrolling for Internal Links
+>>>>>>> c76677fb61e4c4441ab9ab5d88821cd083e7231c
  * ------------------------------------------------------------- */
 function initSmoothScroll() {
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -158,7 +195,11 @@ function initSmoothScroll() {
       const targetElement = document.querySelector(targetId);
       if (targetElement) {
         e.preventDefault();
+<<<<<<< HEAD
         const headerOffset = 85;
+=======
+        const headerOffset = 80;
+>>>>>>> c76677fb61e4c4441ab9ab5d88821cd083e7231c
         const elementPosition = targetElement.getBoundingClientRect().top;
         const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
 
@@ -172,7 +213,11 @@ function initSmoothScroll() {
 }
 
 /* -------------------------------------------------------------
+<<<<<<< HEAD
  * 5. Practice Areas Dual Tab Switcher with Motion Cross-Fade
+=======
+ * 4. Practice Areas Dual Tab Switcher
+>>>>>>> c76677fb61e4c4441ab9ab5d88821cd083e7231c
  * ------------------------------------------------------------- */
 function switchPracticeTab(tab) {
   const businessBtn = document.getElementById('tabBusinessBtn');
@@ -182,6 +227,7 @@ function switchPracticeTab(tab) {
 
   if (!businessBtn || !laborBtn || !businessContent || !laborContent) return;
 
+<<<<<<< HEAD
   const targetContent = tab === 'business' ? businessContent : laborContent;
   const hideContent = tab === 'business' ? laborContent : businessContent;
 
@@ -206,11 +252,33 @@ function switchPracticeTab(tab) {
       stiffness: 300,
       damping: 24
     });
+=======
+  if (tab === 'business') {
+    businessBtn.classList.add('active');
+    businessBtn.classList.remove('text-slate-600');
+    laborBtn.classList.remove('active');
+    laborBtn.classList.add('text-slate-600');
+
+    businessContent.classList.remove('hidden');
+    laborContent.classList.add('hidden');
+  } else if (tab === 'labor') {
+    laborBtn.classList.add('active');
+    laborBtn.classList.remove('text-slate-600');
+    businessBtn.classList.remove('active');
+    businessBtn.classList.add('text-slate-600');
+
+    laborContent.classList.remove('hidden');
+    businessContent.classList.add('hidden');
+>>>>>>> c76677fb61e4c4441ab9ab5d88821cd083e7231c
   }
 }
 
 /* -------------------------------------------------------------
+<<<<<<< HEAD
  * 6. Interactive Legal Risk Diagnostic Quiz
+=======
+ * 5. Interactive Legal Risk Diagnostic Quiz
+>>>>>>> c76677fb61e4c4441ab9ab5d88821cd083e7231c
  * ------------------------------------------------------------- */
 const answers = {
   q1: null,
@@ -226,19 +294,27 @@ function enableNext(step) {
     const nextBtn = document.getElementById(`btnNext${step}`);
     if (nextBtn) {
       nextBtn.disabled = false;
+<<<<<<< HEAD
       if (typeof window.Motion !== 'undefined') {
         window.Motion.animate(nextBtn, { scale: [0.97, 1.02, 1] }, { type: "spring", stiffness: 450, damping: 15 });
       }
+=======
+>>>>>>> c76677fb61e4c4441ab9ab5d88821cd083e7231c
     }
   }
 }
 
 function goToStep(step) {
+<<<<<<< HEAD
+=======
+  // Hide all steps
+>>>>>>> c76677fb61e4c4441ab9ab5d88821cd083e7231c
   for (let i = 1; i <= 4; i++) {
     const s = document.getElementById(`diagStep${i}`);
     if (s) s.classList.add('hidden');
   }
 
+<<<<<<< HEAD
   const target = document.getElementById(`diagStep${step}`);
   if (target) {
     target.classList.remove('hidden');
@@ -257,14 +333,37 @@ function goToStep(step) {
       } else {
         dot.classList.remove('bg-gold-400');
         dot.classList.add('bg-slate-700');
+=======
+  // Show target step
+  const target = document.getElementById(`diagStep${step}`);
+  if (target) target.classList.remove('hidden');
+
+  // Update dots indicator
+  for (let i = 2; i <= 4; i++) {
+    const dot = document.getElementById(`dot${i}`);
+    if (dot) {
+      if (i <= step) {
+        dot.classList.remove('bg-slate-300');
+        dot.classList.add('bg-gold-500');
+      } else {
+        dot.classList.remove('bg-gold-500');
+        dot.classList.add('bg-slate-300');
+>>>>>>> c76677fb61e4c4441ab9ab5d88821cd083e7231c
       }
     }
   }
 }
 
 function calculateRisk() {
+<<<<<<< HEAD
   const total = (answers.q1 || 0) + (answers.q2 || 0) + (answers.q3 || 0) + (answers.q4 || 0);
 
+=======
+  // Total possible score: 0 (perfect) to 16 (high risk)
+  const total = (answers.q1 || 0) + (answers.q2 || 0) + (answers.q3 || 0) + (answers.q4 || 0);
+
+  // Hide step 4
+>>>>>>> c76677fb61e4c4441ab9ab5d88821cd083e7231c
   const step4 = document.getElementById('diagStep4');
   if (step4) step4.classList.add('hidden');
 
@@ -286,6 +385,7 @@ function calculateRisk() {
   let actionText = '';
 
   if (total <= 3) {
+<<<<<<< HEAD
     riskLevel = 'Riesgo Bajo / Estructura Preventiva Óptima';
     riskColorClass = 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40';
     titleText = 'Su empresa mantiene buenas prácticas de prevención jurídica';
@@ -303,6 +403,25 @@ function calculateRisk() {
     titleText = 'Alta exposición legal y financiera para su patrimonio';
     descText = 'Su empresa se encuentra en una zona de alta contingencia frente a juzgados laborales, el Ministerio del Trabajo o la UGPP. Una sola demanda o requerimiento sancionatorio podría comprometer seriamente la liquidez del negocio.';
     actionText = 'URGENTE: Se recomienda una intervención jurídica estratégica inmediata con el abogado Julián Fajardo para estructurar defensas y mitigar sanciones económicas.';
+=======
+    riskLevel = 'Riesgo Bajo / Saludable';
+    riskColorClass = 'bg-emerald-100 text-emerald-800 border border-emerald-300';
+    titleText = 'Su estructura jurídica presenta un nivel óptimo de prevención';
+    descText = 'Sus operaciones demuestran buenas prácticas en formalización mercantil y laboral. No obstante, las recientes reformas laborales y tributarias en Colombia exigen revisiones periódicas anuales.';
+    actionText = 'Mantenga sus políticas blindadas. Le sugerimos una auditoría de control preventivo semestral para verificar actualizaciones del CST y nuevos lineamientos de la UGPP.';
+  } else if (total <= 8) {
+    riskLevel = 'Riesgo Moderado / Alerta Preventiva';
+    riskColorClass = 'bg-amber-100 text-amber-800 border border-amber-300';
+    titleText = 'Existen vulnerabilidades contractuales y laborales detectables';
+    descText = 'Presenta vacíos en contratos comerciales o posibles discrepancias en contratación de colaboradores que podrían desencadenar demandas laborales de primacía de la realidad o dificultades de cobro mercantil.';
+    actionText = 'Se recomienda una revisión inmediata de los otrosíes laborales y la formalización de pactos estatutarios con sus socios antes de que surja una controversia abierta.';
+  } else {
+    riskLevel = 'Riesgo Crítico / Contingencia Inminente';
+    riskColorClass = 'bg-rose-100 text-rose-800 border border-rose-300';
+    titleText = 'Alta exposición legal y financiera para su patrimonio';
+    descText = 'Su empresa se encuentra en una zona de alta contingencia frente a juzgados laborales, el Ministerio del Trabajo o la UGPP. Una sola demanda o requerimiento sancionatorio podría comprometer seriamente la liquidez del negocio.';
+    actionText = 'URGENTE: Se recomienda una intervención jurídica estratégica inmediata con el abogado Julián Fajardo para mitigar sanciones y estructurar defensas perentorias.';
+>>>>>>> c76677fb61e4c4441ab9ab5d88821cd083e7231c
   }
 
   badge.className = `inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-3 ${riskColorClass}`;
@@ -316,6 +435,7 @@ function calculateRisk() {
     `Hola Dr. Julián Fajardo. Acabo de realizar el Diagnóstico Legal en su página web y obtuve un resultado de "${riskLevel}". Quisiera agendar una consulta confidencial para evaluar mi caso.`
   );
   waBtn.href = `https://wa.me/573223106909?text=${waMessage}`;
+<<<<<<< HEAD
 
   if (typeof window.Motion !== 'undefined') {
     window.Motion.animate(resultContainer, { opacity: [0, 1], scale: [0.96, 1] }, {
@@ -324,6 +444,8 @@ function calculateRisk() {
       damping: 22
     });
   }
+=======
+>>>>>>> c76677fb61e4c4441ab9ab5d88821cd083e7231c
 }
 
 function resetQuiz() {
@@ -348,7 +470,11 @@ function resetQuiz() {
 }
 
 /* -------------------------------------------------------------
+<<<<<<< HEAD
  * 7. FAQ Accordion Toggle with Motion Smooth Springs
+=======
+ * 6. FAQ Accordion Toggle
+>>>>>>> c76677fb61e4c4441ab9ab5d88821cd083e7231c
  * ------------------------------------------------------------- */
 function toggleFaq(button) {
   const item = button.closest('.faq-item');
@@ -356,17 +482,25 @@ function toggleFaq(button) {
 
   const isActive = item.classList.contains('active');
 
+<<<<<<< HEAD
   // Close all other FAQs
   document.querySelectorAll('.faq-item').forEach(other => {
     if (other !== item) {
       other.classList.remove('active');
       const trigger = other.querySelector('.faq-trigger');
       if (trigger) trigger.setAttribute('aria-expanded', 'false');
+=======
+  // Close all other FAQs for accordion purity
+  document.querySelectorAll('.faq-item').forEach(other => {
+    if (other !== item) {
+      other.classList.remove('active');
+>>>>>>> c76677fb61e4c4441ab9ab5d88821cd083e7231c
     }
   });
 
   if (isActive) {
     item.classList.remove('active');
+<<<<<<< HEAD
     button.setAttribute('aria-expanded', 'false');
   } else {
     item.classList.add('active');
@@ -375,11 +509,19 @@ function toggleFaq(button) {
     if (content && typeof window.Motion !== 'undefined') {
       window.Motion.animate(content, { opacity: [0, 1], y: [-6, 0] }, { duration: 0.25, ease: "easeOut" });
     }
+=======
+  } else {
+    item.classList.add('active');
+>>>>>>> c76677fb61e4c4441ab9ab5d88821cd083e7231c
   }
 }
 
 /* -------------------------------------------------------------
+<<<<<<< HEAD
  * 8. Intake Consultation Form Submission
+=======
+ * 7. Intake Consultation Form Submission
+>>>>>>> c76677fb61e4c4441ab9ab5d88821cd083e7231c
  * ------------------------------------------------------------- */
 function handleFormSubmit(event) {
   event.preventDefault();
@@ -401,12 +543,17 @@ function handleFormSubmit(event) {
 
   // Visual submission state
   submitBtn.disabled = true;
+<<<<<<< HEAD
   submitBtn.innerText = 'Enviando Consulta Prioritaria...';
+=======
+  submitBtn.innerText = 'Enviando Consulta...';
+>>>>>>> c76677fb61e4c4441ab9ab5d88821cd083e7231c
 
   setTimeout(() => {
     submitBtn.classList.add('hidden');
     successBox.classList.remove('hidden');
 
+<<<<<<< HEAD
     if (typeof window.Motion !== 'undefined') {
       window.Motion.animate(successBox, { opacity: [0, 1], scale: [0.95, 1] }, { type: "spring", stiffness: 350, damping: 20 });
     }
@@ -415,15 +562,31 @@ function handleFormSubmit(event) {
       `*Nueva Consulta desde legalandbusiness.com.co*\n\n` +
       `*Nombre:* ${name}\n` +
       `*Empresa:* ${company || 'Particular / En proceso'}\n` +
+=======
+    // Also prepare a WhatsApp dispatch bridge if user wants instant conversation
+    const waText = encodeURIComponent(
+      `*Nueva Consulta desde legalandbusiness.com.co*\n\n` +
+      `*Nombre:* ${name}\n` +
+      `*Empresa:* ${company || 'Particular / En formación'}\n` +
+>>>>>>> c76677fb61e4c4441ab9ab5d88821cd083e7231c
       `*Ciudad:* ${city}\n` +
       `*Teléfono:* ${phone}\n` +
       `*Área de Interés:* ${area}\n` +
       `*Resumen:* ${message}\n\n` +
+<<<<<<< HEAD
       `_Solicitud de asesoría prioritaria con el Dr. Julián Fajardo_`
     );
 
     const openDirect = confirm(
       `¡Gracias ${name}! Su solicitud fue registrada. ¿Desea además abrir un chat prioritario directo por WhatsApp con el Dr. Julián Fajardo ahora mismo?`
+=======
+      `_Solicitud de atención prioritaria con el Dr. Julián Fajardo_`
+    );
+
+    // Option to open WhatsApp directly with formatted case intake
+    const openDirect = confirm(
+      `¡Gracias ${name}! Su mensaje fue registrado. ¿Desea además abrir un chat prioritario directo por WhatsApp con el Dr. Julián Fajardo ahora mismo?`
+>>>>>>> c76677fb61e4c4441ab9ab5d88821cd083e7231c
     );
 
     if (openDirect) {
@@ -436,7 +599,14 @@ function handleFormSubmit(event) {
       submitBtn.disabled = false;
       submitBtn.innerText = 'Enviar Consulta para Evaluación Prioritaria';
       submitBtn.classList.remove('hidden');
+<<<<<<< HEAD
       successBox.classList.add('hidden');
     }, 7000);
   }, 750);
 }
+=======
+    }, 6000);
+  }, 900);
+}
+
+>>>>>>> c76677fb61e4c4441ab9ab5d88821cd083e7231c
