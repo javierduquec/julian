@@ -1,7 +1,12 @@
 /**
  * LEGAL & BUSINESS - JULIÁN FAJARDO
- * UI/UX Pro Max Engine: Client-Side Interactivity, Responsive Logic,
- * Motion Library Spring Dynamics & Micro-Interactions (motion.dev)
+ * UI/UX Pro Max Engine & Grail-Inspired Kinetic Motion Suite (grail-app.com)
+ * - Motion Library Spring Physics (motion.dev)
+ * - Interactive 3D Perspective Tilt & Cursor Spotlight
+ * - Ambient Stardust Particle Engine
+ * - Kinetic HUD Number Counters
+ * - Magnetic Button Physics & Click Ripples
+ * - Client-Side Interactivity (Diagnostics, Tabs, Accordions, Intake)
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -9,6 +14,11 @@ document.addEventListener('DOMContentLoaded', () => {
   initMobileMenu();
   initHeaderScroll();
   initSmoothScroll();
+  initAmbientCanvas();
+  initKineticCounters();
+  initCardTiltAndSpotlight();
+  initMagneticButtons();
+  initClickRipples();
 });
 
 /* -------------------------------------------------------------
@@ -33,20 +43,18 @@ function initMotionAnimations() {
   // 1.2 Spring Physics for Buttons & Interactive Triggers
   const springButtons = document.querySelectorAll('[data-spring-btn], .btn-gold-solid, .btn-gold-outline, .btn-whatsapp-icon, .btn-diag-next, .btn-diag-calculate');
   springButtons.forEach(btn => {
-    // Hover spring physics
     hover(btn, (element) => {
       animate(element, { scale: 1.035, y: -2 }, { type: "spring", stiffness: 450, damping: 20 });
       return () => animate(element, { scale: 1, y: 0 }, { type: "spring", stiffness: 450, damping: 20 });
     });
 
-    // Press feedback spring physics
     press(btn, (element) => {
       animate(element, { scale: 0.95 }, { type: "spring", stiffness: 550, damping: 15 });
       return () => animate(element, { scale: 1 }, { type: "spring", stiffness: 550, damping: 15 });
     });
   });
 
-  // 1.3 Spring Physics for Cards (Pillars, Services, Cases)
+  // 1.3 Spring Physics for Cards
   const springCards = document.querySelectorAll('[data-spring-card], .pillar-card, .service-detail-card, .case-card');
   springCards.forEach(card => {
     hover(card, (element) => {
@@ -77,20 +85,227 @@ function initMotionAnimations() {
       duration: 0.8
     });
   }, { margin: "-50px" });
-
-  // 1.6 Floating WhatsApp button breath animation
-  const floatBtn = document.querySelector('.floating-btn-whatsapp');
-  if (floatBtn) {
-    animate(floatBtn, { scale: [1, 1.06, 1] }, {
-      duration: 3,
-      repeat: Infinity,
-      ease: "easeInOut"
-    });
-  }
 }
 
 /* -------------------------------------------------------------
- * 2. Mobile Drawer Navigation
+ * 2. Grail-Inspired Ambient Stardust Canvas Engine
+ * ------------------------------------------------------------- */
+function initAmbientCanvas() {
+  const canvas = document.getElementById('ambientCanvas');
+  if (!canvas) return;
+
+  const ctx = canvas.getContext('2d');
+  let width = (canvas.width = window.innerWidth);
+  let height = (canvas.height = window.innerHeight);
+
+  window.addEventListener('resize', () => {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+  }, { passive: true });
+
+  const mouse = { x: -1000, y: -1000, radius: 140 };
+  window.addEventListener('mousemove', (e) => {
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+  }, { passive: true });
+
+  const particleCount = Math.min(Math.floor((width * height) / 28000), 45);
+  const particles = [];
+
+  for (let i = 0; i < particleCount; i++) {
+    particles.push({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      size: Math.random() * 1.5 + 0.6,
+      vx: (Math.random() - 0.5) * 0.3,
+      vy: -(Math.random() * 0.4 + 0.15),
+      alpha: Math.random() * 0.45 + 0.2,
+      baseAlpha: Math.random() * 0.45 + 0.2
+    });
+  }
+
+  function render() {
+    ctx.clearRect(0, 0, width, height);
+
+    for (let i = 0; i < particles.length; i++) {
+      const p = particles[i];
+
+      p.x += p.vx;
+      p.y += p.vy;
+
+      // Wrap edges
+      if (p.y < 0) {
+        p.y = height;
+        p.x = Math.random() * width;
+      }
+      if (p.x < 0) p.x = width;
+      if (p.x > width) p.x = 0;
+
+      // Mouse distance repulsion/glow
+      const dx = mouse.x - p.x;
+      const dy = mouse.y - p.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      if (dist < mouse.radius) {
+        const force = (mouse.radius - dist) / mouse.radius;
+        p.x -= (dx / dist) * force * 1.5;
+        p.y -= (dy / dist) * force * 1.5;
+        p.alpha = Math.min(p.baseAlpha + force * 0.5, 0.9);
+      } else {
+        p.alpha += (p.baseAlpha - p.alpha) * 0.05;
+      }
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(212, 175, 119, ${p.alpha})`;
+      ctx.fill();
+
+      // Subtle constellation links
+      for (let j = i + 1; j < particles.length; j++) {
+        const p2 = particles[j];
+        const dist2 = Math.hypot(p.x - p2.x, p.y - p2.y);
+        if (dist2 < 85) {
+          const lineAlpha = (1 - dist2 / 85) * 0.08 * Math.min(p.alpha, p2.alpha);
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(p2.x, p2.y);
+          ctx.strokeStyle = `rgba(212, 175, 119, ${lineAlpha})`;
+          ctx.lineWidth = 0.6;
+          ctx.stroke();
+        }
+      }
+    }
+
+    requestAnimationFrame(render);
+  }
+
+  requestAnimationFrame(render);
+}
+
+/* -------------------------------------------------------------
+ * 3. Kinetic HUD Number Counters (Scroll-Driven Ticker)
+ * ------------------------------------------------------------- */
+function initKineticCounters() {
+  const counterElements = document.querySelectorAll('.stat-number[data-target]');
+  if (!counterElements.length) return;
+
+  const observer = new IntersectionObserver((entries, obs) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const el = entry.target;
+        const target = parseFloat(el.getAttribute('data-target')) || 0;
+        const prefix = el.getAttribute('data-prefix') || '';
+        const suffix = el.getAttribute('data-suffix') || '';
+        const duration = 1800; // 1.8s
+        const startTime = performance.now();
+
+        function animateCount(currentTime) {
+          const elapsed = currentTime - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          // Ease-out exponential
+          const ease = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+          const currentVal = Math.floor(ease * target);
+
+          el.textContent = `${prefix}${currentVal}${suffix}`;
+
+          if (progress < 1) {
+            requestAnimationFrame(animateCount);
+          } else {
+            el.textContent = `${prefix}${target}${suffix}`;
+            if (typeof window.Motion !== 'undefined') {
+              window.Motion.animate(el, { scale: [1, 1.12, 1] }, { duration: 0.4, ease: "easeOut" });
+            }
+          }
+        }
+
+        requestAnimationFrame(animateCount);
+        obs.unobserve(el);
+      }
+    });
+  }, { threshold: 0.3 });
+
+  counterElements.forEach(el => observer.observe(el));
+}
+
+/* -------------------------------------------------------------
+ * 4. 3D Card Perspective Tilt & Dynamic Cursor Spotlight
+ * ------------------------------------------------------------- */
+function initCardTiltAndSpotlight() {
+  const cards = document.querySelectorAll(
+    '.pillar-card, .service-detail-card, .executive-dossier-card, .case-card, .diag-card, .faq-item, .grail-spotlight-card'
+  );
+
+  cards.forEach(card => {
+    card.addEventListener('mousemove', (e) => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      // Pass coordinates to CSS variables for radial spotlight
+      card.style.setProperty('--mouse-x', `${x}px`);
+      card.style.setProperty('--mouse-y', `${y}px`);
+
+      // 3D perspective tilt
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      const rotateX = ((y - centerY) / centerY) * -6.5; // Max 6.5 deg
+      const rotateY = ((x - centerX) / centerX) * 6.5;  // Max 6.5 deg
+
+      card.style.transform = `perspective(1000px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) scale3d(1.015, 1.015, 1.015)`;
+    });
+
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+    });
+  });
+}
+
+/* -------------------------------------------------------------
+ * 5. Magnetic Button Physics (Grail-Style Attraction)
+ * ------------------------------------------------------------- */
+function initMagneticButtons() {
+  const magneticButtons = document.querySelectorAll(
+    '.btn-gold-solid, .btn-gold-outline, .btn-ghost-light, .btn-whatsapp-icon, .floating-btn-whatsapp, .grail-magnetic'
+  );
+
+  magneticButtons.forEach(btn => {
+    btn.addEventListener('mousemove', (e) => {
+      const rect = btn.getBoundingClientRect();
+      const x = (e.clientX - rect.left - rect.width / 2) * 0.24;
+      const y = (e.clientY - rect.top - rect.height / 2) * 0.24;
+      btn.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) scale(1.03)`;
+    });
+
+    btn.addEventListener('mouseleave', () => {
+      btn.style.transform = 'translate(0px, 0px) scale(1)';
+    });
+  });
+}
+
+/* -------------------------------------------------------------
+ * 6. Click Ripple Wave Animation
+ * ------------------------------------------------------------- */
+function initClickRipples() {
+  const hosts = document.querySelectorAll('.btn-gold-solid, .btn-gold-outline, .btn-diag-next, .btn-diag-calculate');
+  hosts.forEach(host => {
+    host.classList.add('grail-ripple-host');
+    host.addEventListener('click', (e) => {
+      const rect = host.getBoundingClientRect();
+      const ripple = document.createElement('span');
+      ripple.className = 'grail-ripple-circle';
+      const size = Math.max(rect.width, rect.height) * 2;
+      ripple.style.width = ripple.style.height = `${size}px`;
+      ripple.style.left = `${e.clientX - rect.left - size / 2}px`;
+      ripple.style.top = `${e.clientY - rect.top - size / 2}px`;
+
+      host.appendChild(ripple);
+      setTimeout(() => ripple.remove(), 650);
+    });
+  });
+}
+
+/* -------------------------------------------------------------
+ * 7. Mobile Drawer Navigation
  * ------------------------------------------------------------- */
 function initMobileMenu() {
   const menuBtn = document.getElementById('mobileMenuBtn');
@@ -129,7 +344,7 @@ function initMobileMenu() {
 }
 
 /* -------------------------------------------------------------
- * 3. Sticky Header Blur & Dynamic Styling on Scroll
+ * 8. Sticky Header Blur & Dynamic Styling on Scroll
  * ------------------------------------------------------------- */
 function initHeaderScroll() {
   const header = document.querySelector('.site-header');
@@ -147,14 +362,14 @@ function initHeaderScroll() {
 }
 
 /* -------------------------------------------------------------
- * 4. Smooth Scrolling for Internal Links
+ * 9. Smooth Scrolling for Internal Links
  * ------------------------------------------------------------- */
 function initSmoothScroll() {
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
       const targetId = this.getAttribute('href');
       if (targetId === '#' || !targetId) return;
-      
+
       const targetElement = document.querySelector(targetId);
       if (targetElement) {
         e.preventDefault();
@@ -172,7 +387,7 @@ function initSmoothScroll() {
 }
 
 /* -------------------------------------------------------------
- * 5. Practice Areas Dual Tab Switcher with Motion Cross-Fade
+ * 10. Practice Areas Dual Tab Switcher with Motion Cross-Fade
  * ------------------------------------------------------------- */
 function switchPracticeTab(tab) {
   const businessBtn = document.getElementById('tabBusinessBtn');
@@ -210,7 +425,7 @@ function switchPracticeTab(tab) {
 }
 
 /* -------------------------------------------------------------
- * 6. Interactive Legal Risk Diagnostic Quiz
+ * 11. Interactive Legal Risk Diagnostic Quiz
  * ------------------------------------------------------------- */
 const answers = {
   q1: null,
@@ -247,7 +462,6 @@ function goToStep(step) {
     }
   }
 
-  // Update dots indicator
   for (let i = 1; i <= 4; i++) {
     const dot = document.getElementById(`dot${i}`);
     if (dot) {
@@ -348,7 +562,7 @@ function resetQuiz() {
 }
 
 /* -------------------------------------------------------------
- * 7. FAQ Accordion Toggle with Motion Smooth Springs
+ * 12. FAQ Accordion Toggle with Motion Smooth Springs
  * ------------------------------------------------------------- */
 function toggleFaq(button) {
   const item = button.closest('.faq-item');
@@ -379,7 +593,7 @@ function toggleFaq(button) {
 }
 
 /* -------------------------------------------------------------
- * 8. Intake Consultation Form Submission
+ * 13. Intake Consultation Form Submission
  * ------------------------------------------------------------- */
 function handleFormSubmit(event) {
   event.preventDefault();
@@ -430,7 +644,6 @@ function handleFormSubmit(event) {
       window.open(`https://wa.me/573223106909?text=${waText}`, '_blank');
     }
 
-    // Reset form after delay
     setTimeout(() => {
       document.getElementById('contactForm').reset();
       submitBtn.disabled = false;

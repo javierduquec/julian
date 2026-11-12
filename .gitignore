@@ -1,0 +1,12 @@
+# Dependencies
+node_modules/
+
+# Agent skills, caches & temp tools
+.*
+!.gitignore
+data/
+skills/
+skills-lock.json
+
+# Local backups
+*-v1.*

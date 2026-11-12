@@ -696,3 +696,177 @@ body {
     padding-left: 0.6rem;
   }
 }
+
+
+/* ==========================================================================
+   GRAIL-INSPIRED KINETIC MOTION & ATMOSPHERIC EFFECTS (grail-app.com)
+   Interactive 3D Tilt, Dynamic Cursor Spotlight, HUD Floating & Particles
+   ========================================================================== */
+
+/* Ambient Particle Canvas */
+#ambientCanvas {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.75;
+}
+
+/* Ensure content sits above ambient canvas */
+header, main, footer, .top-bar, .floating-btn-whatsapp {
+  position: relative;
+  z-index: 10;
+}
+
+/* Interactive Spotlight & 3D Glassmorphic Cards */
+.grail-spotlight-card,
+.pillar-card,
+.service-detail-card,
+.executive-dossier-card,
+.case-card,
+.diag-card {
+  position: relative;
+  --mouse-x: 50%;
+  --mouse-y: 50%;
+  transform-style: preserve-3d;
+  perspective: 1200px;
+  will-change: transform;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.grail-spotlight-card::before,
+.pillar-card::before,
+.service-detail-card::before,
+.executive-dossier-card::before,
+.case-card::before,
+.diag-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(380px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(212, 175, 119, 0.15), transparent 75%);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.grail-spotlight-card:hover::before,
+.pillar-card:hover::before,
+.service-detail-card:hover::before,
+.executive-dossier-card:hover::before,
+.case-card:hover::before,
+.diag-card:hover::before {
+  opacity: 1;
+}
+
+/* Dynamic Border Highlight that follows the cursor */
+.grail-spotlight-card::after,
+.pillar-card::after,
+.service-detail-card::after,
+.executive-dossier-card::after,
+.case-card::after,
+.diag-card::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: radial-gradient(260px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(212, 175, 119, 0.55), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+  z-index: 0;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  -webkit-mask-composite: xor;
+  padding: 1px;
+}
+
+.grail-spotlight-card:hover::after,
+.pillar-card:hover::after,
+.service-detail-card:hover::after,
+.executive-dossier-card:hover::after,
+.case-card:hover::after,
+.diag-card:hover::after {
+  opacity: 1;
+}
+
+/* Floating HUD Keyframe Animations */
+@keyframes grailFloatSlow {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-7px) rotate(0.3deg);
+  }
+}
+
+@keyframes grailFloatSubtle {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes grailPulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 12px rgba(212, 175, 119, 0.15);
+  }
+  50% {
+    box-shadow: 0 0 26px rgba(212, 175, 119, 0.42);
+  }
+}
+
+.grail-float {
+  animation: grailFloatSlow 5s ease-in-out infinite;
+}
+
+.grail-float-delayed {
+  animation: grailFloatSlow 5.8s ease-in-out 1.5s infinite;
+}
+
+.grail-float-subtle {
+  animation: grailFloatSubtle 3.8s ease-in-out infinite;
+}
+
+.grail-glow-pulse {
+  animation: grailPulseGlow 3.2s ease-in-out infinite;
+}
+
+/* Magnetic Button Hover Dynamics */
+.grail-magnetic {
+  will-change: transform;
+  transition: transform 0.16s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Click Ripple Wave Effect */
+.grail-ripple-host {
+  position: relative;
+  overflow: hidden;
+}
+
+.grail-ripple-circle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(212, 175, 119, 0.35);
+  transform: scale(0);
+  animation: grailRippleAnim 0.65s linear;
+  pointer-events: none;
+}
+
+@keyframes grailRippleAnim {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* Stat Numbers Kinetic Ticker */
+.stat-number {
+  font-variant-numeric: tabular-nums;
+  display: inline-block;
+  will-change: transform, opacity;
+}
