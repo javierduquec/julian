@@ -7,7 +7,17 @@
  * - Kinetic HUD Number Counters
  * - Magnetic Button Physics & Click Ripples
  * - Client-Side Interactivity (Diagnostics, Tabs, Accordions, Intake)
+ * - Defensive Hardening: Frame-busting, Input Sanitization & Bounds Checking
  */
+
+// Defensive Frame-busting / Anti-Clickjacking protection
+try {
+  if (window.top !== window.self) {
+    window.top.location = window.self.location;
+  }
+} catch (e) {
+  // Handled silently if cross-origin frame restriction applies
+}
 
 document.addEventListener('DOMContentLoaded', () => {
   initMotionAnimations();
@@ -610,6 +620,12 @@ function handleFormSubmit(event) {
 
   if (!name || !phone || !email || !area || !message) {
     alert('Por favor complete todos los campos obligatorios (*)');
+    return;
+  }
+
+  // Defensive input length boundary checks (prevent URI buffer overflow)
+  if (name.length > 80 || company.length > 100 || phone.length > 25 || email.length > 100 || city.length > 80 || message.length > 1500) {
+    alert('Uno de los campos supera la longitud máxima permitida.');
     return;
   }
 

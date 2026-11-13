@@ -12,7 +12,7 @@
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self'; base-uri 'self'; form-action 'self' https://wa.me;">
   
   <!-- Favicon & Touch Icon -->
   <link rel="icon" type="image/png" href="logo-icon.png">
@@ -1279,22 +1279,22 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label for="formName" class="form-label">Nombre Completo *</label>
-                    <input type="text" id="formName" required placeholder="Ej. Carlos Mendoza" class="form-input">
+                    <input type="text" id="formName" required maxlength="80" placeholder="Ej. Carlos Mendoza" class="form-input">
                   </div>
                   <div>
                     <label for="formCompany" class="form-label">Empresa / Razón Social</label>
-                    <input type="text" id="formCompany" placeholder="Ej. Inversiones Andinas S.A.S." class="form-input">
+                    <input type="text" id="formCompany" maxlength="100" placeholder="Ej. Inversiones Andinas S.A.S." class="form-input">
                   </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label for="formPhone" class="form-label">Teléfono Móvil (WhatsApp) *</label>
-                    <input type="tel" id="formPhone" required placeholder="Ej. 322 310 6909" class="form-input">
+                    <input type="tel" id="formPhone" required maxlength="25" pattern="[+0-9\s-]{7,25}" placeholder="Ej. 322 310 6909" class="form-input">
                   </div>
                   <div>
                     <label for="formEmail" class="form-label">Correo Electrónico Corporativo *</label>
-                    <input type="email" id="formEmail" required placeholder="carlos@suempresa.com" class="form-input">
+                    <input type="email" id="formEmail" required maxlength="100" placeholder="carlos@suempresa.com" class="form-input">
                   </div>
                 </div>
 
@@ -1313,13 +1313,13 @@
                   </div>
                   <div>
                     <label for="formCity" class="form-label">Ciudad / Ubicación *</label>
-                    <input type="text" id="formCity" required placeholder="Ej. Bogotá D.C. / Medellín / Virtual" class="form-input">
+                    <input type="text" id="formCity" required maxlength="80" placeholder="Ej. Bogotá D.C. / Medellín / Virtual" class="form-input">
                   </div>
                 </div>
 
                 <div>
                   <label for="formMessage" class="form-label">Resumen Breve de la Consulta *</label>
-                  <textarea id="formMessage" required rows="4" placeholder="Describa brevemente la situación, antecedentes o términos relevantes..." class="form-input"></textarea>
+                  <textarea id="formMessage" required maxlength="1500" rows="4" placeholder="Describa brevemente la situación, antecedentes o términos relevantes..." class="form-input"></textarea>
                 </div>
 
                 <div class="flex items-start gap-2.5 pt-1">
