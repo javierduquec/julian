@@ -641,7 +641,7 @@ function handleFormSubmit(event) {
     );
 
     if (openDirect) {
-      window.open(`https://wa.me/573223106909?text=${waText}`, '_blank');
+      window.open(`https://wa.me/573223106909?text=${waText}`, '_blank', 'noopener,noreferrer');
     }
 
     setTimeout(() => {
