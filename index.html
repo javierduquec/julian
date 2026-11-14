@@ -12,7 +12,7 @@
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self'; base-uri 'self'; form-action 'self' https://wa.me;">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; media-src 'self' data: blob:; connect-src 'self'; base-uri 'self'; form-action 'self' https://wa.me;">
   
   <!-- Favicon & Touch Icon -->
   <link rel="icon" type="image/png" href="logo-icon.png">
@@ -21,7 +21,7 @@
   <!-- Google Fonts: Playfair Display, Plus Jakarta Sans, Cinzel -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800;900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   
   <!-- Tailwind CSS CDN Engine -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -30,6 +30,7 @@
       theme: {
         extend: {
           colors: {
+            obsidian: '#0A0A0C',
             primary: '#0B1320',
             'primary-darker': '#050B14',
             'navy-card': '#0E1728',
@@ -59,13 +60,23 @@
     }
   </script>
 
+  <!-- GSAP Core & ScrollTrigger (GreenSock - Awwwards Kinetic Suite) -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+
+  <!-- Lenis Smooth Scroll Engine (@studio-freight/lenis) -->
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+
   <!-- Motion (motion.dev) - Official Animation Engine -->
   <script src="https://cdn.jsdelivr.net/npm/motion@latest/dist/motion.js"></script>
 
   <!-- Bespoke Stylesheet -->
   <link rel="stylesheet" href="styles.css">
 </head>
-<body class="bg-[#050B14] text-slate-100 antialiased selection:bg-gold-500 selection:text-slate-950 relative">
+<body class="bg-[#0A0A0C] text-slate-100 antialiased selection:bg-gold-500 selection:text-slate-950 relative">
+
+  <!-- ANALOG FILM GRAIN OVERLAY (Awwwards 35mm Cinematic Texture) -->
+  <div class="film-grain-overlay pointer-events-none fixed inset-0 z-40" aria-hidden="true"></div>
 
   <!-- AMBIENT PARTICLE STARFIELD CANVAS (Grail-inspired atmospheric engine) -->
   <canvas id="ambientCanvas" class="fixed inset-0 pointer-events-none z-0" aria-hidden="true"></canvas>
@@ -233,155 +244,177 @@
   </header>
 
   <main>
-    <!-- HERO SECTION: Asymmetric Prestige Editorial with Motion spring elements -->
-    <section class="hero-section relative overflow-hidden bg-gradient-to-b from-[#050B14] via-[#08101E] to-[#0A1424] text-white pt-14 pb-24 lg:pt-24 lg:pb-36 border-b border-white/10">
+    <!-- ======================================================================
+         AWWARDS-LEVEL KINETIC HERO: MASKED TYPOGRAPHY & SCROLL-TRIGGERED FULLSCREEN VIDEO
+         ====================================================================== -->
+    <section id="heroStage" class="hero-viewport-stage relative w-full h-screen min-h-[100dvh] overflow-hidden bg-[#0A0A0C] flex items-center justify-center select-none">
       
-      <!-- Background Ambient Glow & Architectural Grid -->
-      <div class="absolute inset-0 pointer-events-none opacity-20" aria-hidden="true">
-        <div class="absolute -top-32 -right-32 w-96 h-96 bg-gold-500/20 rounded-full blur-3xl"></div>
-        <div class="absolute bottom-10 left-10 w-96 h-96 bg-navy-light/40 rounded-full blur-3xl"></div>
-        <div class="hero-grid-pattern"></div>
+      <!-- 1. Background Video Layer (Loops seamlessly in high-definition) -->
+      <div class="hero-video-box absolute inset-0 w-full h-full overflow-hidden">
+        <video 
+          id="heroVideo" 
+          class="hero-video-element w-full h-full object-cover transform scale-105" 
+          autoplay 
+          loop 
+          muted 
+          playsinline 
+          preload="auto"
+          poster="julian-fajardo.jpg"
+        >
+          <source src="julianabogado.mp4" type="video/mp4">
+        </video>
+        <!-- Cinematic dark vignette to unify colors with #0A0A0C -->
+        <div class="hero-video-tint absolute inset-0 bg-gradient-to-t from-[#0A0A0C] via-[#0A0A0C]/40 to-[#0A0A0C]/70 pointer-events-none transition-opacity duration-700"></div>
       </div>
 
-      <div class="container-luxury relative z-10">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-10 items-center">
+      <!-- 2. Scalable Typography Cutout Mask (Live video shines through the letterforms) -->
+      <svg class="hero-mask-svg absolute inset-0 w-full h-full pointer-events-none z-10" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+        <defs>
+          <mask id="heroTextCutout" x="0" y="0" width="100%" height="100%">
+            <!-- White solid base keeps the #0A0A0C obsidian background -->
+            <rect width="100%" height="100%" fill="white" />
+            <!-- Black text punches a clean transparent window inside the letters for the video -->
+            <g id="heroMaskScaleGroup" class="origin-center" style="transform-origin: 960px 540px;">
+              <text 
+                class="hero-mask-main-title select-none" 
+                x="960" 
+                y="485" 
+                text-anchor="middle" 
+                dominant-baseline="central" 
+                fill="black" 
+                font-family="'Cinzel', 'Playfair Display', serif" 
+                font-weight="900" 
+                font-size="124" 
+                letter-spacing="12"
+              >LEGAL &amp; BUSINESS</text>
+              <text 
+                class="hero-mask-sub-title select-none" 
+                x="960" 
+                y="595" 
+                text-anchor="middle" 
+                dominant-baseline="central" 
+                fill="black" 
+                font-family="'Plus Jakarta Sans', sans-serif" 
+                font-weight="700" 
+                font-size="28" 
+                letter-spacing="18"
+              >JULIÁN FAJARDO · COLOMBIA</text>
+            </g>
+          </mask>
+        </defs>
+        <!-- The obsidian mask canvas: everywhere is #0A0A0C except where the cutout expands -->
+        <rect width="100%" height="100%" fill="#0A0A0C" mask="url(#heroTextCutout)" />
+      </svg>
+
+      <!-- 3. Foreground UI Overlay (Pre-scroll Text Reveal & Frosted Glass Action Controls) -->
+      <div class="hero-foreground-ui absolute inset-0 z-20 flex flex-col justify-between p-6 sm:p-12 lg:p-16 pointer-events-none">
+        
+        <!-- Top Row: Despacho Tag & Specialty -->
+        <div class="hero-top-row flex items-center justify-between w-full pointer-events-auto hero-ui-fade">
+          <div class="hero-line-mask overflow-hidden">
+            <div class="hero-line-inner inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-gold-300 text-xs font-semibold tracking-widest uppercase backdrop-blur-md">
+              <span class="w-2 h-2 rounded-full bg-gold-400 animate-pulse" aria-hidden="true"></span>
+              <span>Despacho Jurídico Corporativo · Bogotá D.C.</span>
+            </div>
+          </div>
           
-          <!-- Hero Left Column (7 cols) -->
-          <div class="lg:col-span-7 flex flex-col gap-6" data-motion="fade-up">
-            
-            <div class="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-white/5 border border-gold-500/30 text-gold-300 text-xs font-semibold tracking-wide w-fit backdrop-blur-md">
-              <img src="logo-icon.png" alt="Legal & Business" class="w-4 h-4 object-contain">
-              <span>Derecho Comercial, Corporativo & Laboral Empresarial</span>
+          <div class="hidden sm:block">
+            <div class="hero-line-mask overflow-hidden">
+              <span class="hero-line-inner text-[11px] font-mono text-slate-400 uppercase tracking-widest">
+                Derecho Comercial &amp; Laboral Empresarial
+              </span>
             </div>
+          </div>
+        </div>
 
-            <h1 class="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.12] tracking-tight text-slate-50">
-              Seguridad jurídica para <span class="text-gold-gradient italic">hacer crecer</span> su empresa. Firmeza para proteger su talento.
-            </h1>
-
-            <p class="text-slate-300 text-base sm:text-lg leading-relaxed max-w-2xl font-light">
-              Bajo la dirección del abogado <strong class="text-white font-medium">Julián Fajardo</strong>, brindamos asesoría y asistencia jurídica de élite en <strong class="text-gold-300 font-medium">Negocios y Trabajo</strong>. Blindamos operaciones mercantiles, resolvemos controversias laborales complejas y mitigamos riesgos regulatorios en Colombia con visión comercial y rigor procesal.
-            </p>
-
-            <!-- Action Triggers with Motion Spring Physics -->
-            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-2">
-              <a href="#contacto" data-spring-btn class="btn-gold-solid group flex items-center justify-center gap-3 py-4 px-8 rounded-xl font-semibold text-sm tracking-wide shadow-xl shadow-gold-600/20 grail-magnetic">
-                <span>Solicitar Asesoría Estratégica</span>
-                <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-              </a>
-              <a href="#diagnostico" data-spring-btn class="btn-ghost-light flex items-center justify-center gap-2.5 py-4 px-6 rounded-xl text-sm font-medium text-slate-200 hover:text-white border border-white/15 hover:border-gold-400/50 backdrop-blur-md grail-magnetic">
-                <svg class="w-4 h-4 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                <span>Diagnosticar Riesgo Gratis</span>
-              </a>
+        <!-- Center Lower Area: Text Reveal Manifesto & Frosted Glass Magnetic Button -->
+        <div class="hero-center-content flex flex-col items-center text-center max-w-4xl mx-auto my-auto w-full hero-ui-fade">
+          
+          <!-- Editorial Headline Reveal (Mechanical translation from overflow-hidden lines) -->
+          <div class="hero-editorial-lines mb-7">
+            <div class="hero-line-mask overflow-hidden">
+              <h1 class="hero-line-inner font-serif text-2xl sm:text-3xl lg:text-4xl font-bold text-white tracking-tight leading-tight">
+                Seguridad jurídica para hacer crecer su empresa.
+              </h1>
             </div>
-
-            <!-- Trust Bar / Metrics Ticker (Grail-inspired Kinetic Counters) -->
-            <div class="pt-8 mt-2 border-t border-white/10 grid grid-cols-2 sm:grid-cols-4 gap-6 reveal-group">
-              <div class="stat-item reveal-item grail-spotlight-card p-2 rounded-lg" data-spring-card data-tilt>
-                <div class="stat-number font-serif text-2xl sm:text-3xl font-bold text-gold-300" data-target="12" data-prefix="+" data-suffix="">+12</div>
-                <div class="stat-label text-xs text-slate-400 leading-snug mt-1">Años de experiencia en litigio y consultoría</div>
-              </div>
-              <div class="stat-item reveal-item grail-spotlight-card p-2 rounded-lg" data-spring-card data-tilt>
-                <div class="stat-number font-serif text-2xl sm:text-3xl font-bold text-white" data-target="96" data-prefix="" data-suffix="%">96%</div>
-                <div class="stat-label text-xs text-slate-400 leading-snug mt-1">Efectividad en acuerdos prejudiciales</div>
-              </div>
-              <div class="stat-item reveal-item grail-spotlight-card p-2 rounded-lg" data-spring-card data-tilt>
-                <div class="stat-number font-serif text-2xl sm:text-3xl font-bold text-gold-300" data-target="18" data-prefix="+$" data-suffix="MM">+$18MM</div>
-                <div class="stat-label text-xs text-slate-400 leading-snug mt-1">En pasivos laborales y fiscales mitigados</div>
-              </div>
-              <div class="stat-item reveal-item grail-spotlight-card p-2 rounded-lg" data-spring-card data-tilt>
-                <div class="stat-number font-serif text-2xl sm:text-3xl font-bold text-white" data-target="100" data-prefix="" data-suffix="%">100%</div>
-                <div class="stat-label text-xs text-slate-400 leading-snug mt-1">Confidencialidad y respuesta en &lt;24h</div>
-              </div>
+            <div class="hero-line-mask overflow-hidden mt-1.5">
+              <p class="hero-line-inner font-serif text-2xl sm:text-3xl lg:text-4xl italic font-semibold text-gold-gradient tracking-tight leading-tight">
+                Firmeza procesal para defender su patrimonio corporativo.
+              </p>
             </div>
-
           </div>
 
-          <!-- Hero Right Column: Executive Dossier Card (5 cols) -->
-          <div class="lg:col-span-5" data-motion="fade-up">
-            <div data-spring-card class="executive-dossier-card relative p-7 sm:p-9 rounded-2xl bg-gradient-to-b from-[#0E1728]/95 to-[#050B14]/95 border border-gold-500/40 shadow-2xl backdrop-blur-2xl">
-              
-              <!-- Card Corner Ornament -->
-              <div class="absolute top-0 right-0 w-24 h-24 overflow-hidden rounded-tr-2xl pointer-events-none" aria-hidden="true">
-                <div class="absolute transform rotate-45 bg-gold-500/10 text-gold-400 text-[9px] font-mono py-1 right-[-35px] top-[18px] w-[120px] text-center border-b border-gold-500/20 font-bold">
-                  COLOMBIA
-                </div>
+          <!-- Frosted Glass Action Controls -->
+          <div class="hero-action-bar flex flex-col sm:flex-row items-center justify-center gap-4 pointer-events-auto hero-ui-stagger">
+            
+            <!-- Frosted Glass Magnetic Button (Glassmorphism: blur(16px), 12% white border) -->
+            <button 
+              id="heroMagneticBtn" 
+              class="btn-frosted-magnetic group"
+              type="button"
+              aria-label="Ver Video Institucional a pantalla completa"
+            >
+              <div class="w-8 h-8 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-gold-300 group-hover:scale-110 transition-transform">
+                <svg class="w-3.5 h-3.5 fill-current ml-0.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
               </div>
+              <span class="btn-magnetic-text tracking-wider uppercase text-xs font-bold">Ver Video</span>
+              <span class="sound-indicator text-xs opacity-75 font-mono ml-1" title="Alternar audio">🔇</span>
+            </button>
 
-              <!-- Header with Real Attorney Photo Badge -->
-              <div class="flex items-start gap-4 pb-6 border-b border-white/10">
-                <div class="attorney-avatar-box shrink-0">
-                  <img src="julian-fajardo.jpg" alt="Abogado Julián Fajardo - Socio Director" class="w-16 h-16 rounded-xl object-cover object-top border-2 border-gold-400 shadow-lg">
-                  <span class="active-dot" title="Abogado disponible para consultas prioritarias" aria-hidden="true"></span>
-                </div>
-                <div>
-                  <span class="text-xs font-mono uppercase tracking-widest text-gold-400 block font-semibold">Socio Director & Fundador</span>
-                  <h2 class="font-serif text-xl sm:text-2xl font-bold text-white">Julián Fajardo</h2>
-                  <p class="text-xs text-slate-300 mt-0.5">Abogado Especialista en Negocios y Derecho Laboral</p>
-                  <div class="mt-2 flex items-center gap-2 text-[11px] text-emerald-400 font-medium">
-                    <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-                    <span>Tarjeta Profesional Vigente · Rama Judicial</span>
-                  </div>
-                </div>
-              </div>
+            <!-- Direct Legal Consultation CTA -->
+            <a 
+              href="#contacto" 
+              data-spring-btn 
+              class="btn-gold-solid py-3 px-7 rounded-full text-xs uppercase font-bold tracking-wider shadow-xl shadow-gold-600/20"
+            >
+              Agendar Consulta
+            </a>
 
-              <!-- Focal Points List -->
-              <div class="py-5 space-y-3.5 text-xs text-slate-300">
-                <div class="flex items-start gap-3">
-                  <div class="p-1 rounded bg-gold-500/10 text-gold-400 mt-0.5" aria-hidden="true">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                  </div>
-                  <div>
-                    <strong class="text-white block font-medium">Derecho Comercial y Societario</strong>
-                    <span>Estructuración de S.A.S., pactos de accionistas, contratos mercantiles y acuerdos de confidencialidad.</span>
-                  </div>
-                </div>
-
-                <div class="flex items-start gap-3">
-                  <div class="p-1 rounded bg-gold-500/10 text-gold-400 mt-0.5" aria-hidden="true">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                  </div>
-                  <div>
-                    <strong class="text-white block font-medium">Derecho Laboral Empresarial & Seguridad Social</strong>
-                    <span>Auditoría laboral preventiva, blindaje frente a despidos, procesos disciplinarios y defensa UGPP.</span>
-                  </div>
-                </div>
-
-                <div class="flex items-start gap-3">
-                  <div class="p-1 rounded bg-gold-500/10 text-gold-400 mt-0.5" aria-hidden="true">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                  </div>
-                  <div>
-                    <strong class="text-white block font-medium">Resolución de Disputas & Litigio Estratégico</strong>
-                    <span>Representación ante juzgados civiles y laborales, tribunales de arbitramento y Ministerio del Trabajo.</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Quick Action Card Footer -->
-              <div class="pt-5 border-t border-white/10 flex flex-col gap-3">
-                <div class="bg-primary/70 rounded-xl p-3 border border-white/10 flex items-center justify-between">
-                  <div class="text-xs">
-                    <span class="text-slate-400 block text-[11px]">Siguiente franja de consulta:</span>
-                    <span class="text-white font-medium flex items-center gap-1.5 mt-0.5">
-                      <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" aria-hidden="true"></span>
-                      Cupos disponibles esta semana
-                    </span>
-                  </div>
-                  <a href="#contacto" data-spring-btn class="text-xs font-semibold text-gold-300 hover:text-gold-200 underline underline-offset-4">
-                    Apartar cita →
-                  </a>
-                </div>
-
-                <p class="text-[11px] text-slate-400 text-center italic">
-                  "Asesoría directa con el Dr. Fajardo, sin intermediarios ni dilaciones burocráticas."
-                </p>
-              </div>
-
-            </div>
           </div>
 
         </div>
+
+        <!-- Bottom Row: Director Accreditation & Scroll Prompt -->
+        <div class="hero-bottom-row flex items-end justify-between w-full pointer-events-auto hero-ui-fade">
+          <div class="text-[11px] text-slate-400 font-light hidden sm:block">
+            <span>Dirección: </span>
+            <strong class="text-white font-medium">Dr. Julián Fajardo</strong> · Rama Judicial de Colombia
+          </div>
+
+          <!-- Animated Scroll-Down Prompt -->
+          <div class="flex flex-col items-center gap-2 mx-auto sm:mx-0">
+            <span class="text-[10px] uppercase font-mono tracking-widest text-slate-400">Hacer scroll para revelar</span>
+            <div class="w-5 h-9 rounded-full border border-white/20 flex items-start justify-center p-1">
+              <div class="w-1 h-2 rounded-full bg-gold-400 animate-bounce"></div>
+            </div>
+          </div>
+
+          <div class="text-right hidden sm:block">
+            <span class="text-[11px] font-mono text-gold-400/90 uppercase tracking-widest block font-semibold">
+              COBERTURA NACIONAL
+            </span>
+            <span class="text-[10px] text-slate-500 font-mono">BOGOTÁ · MEDELLÍN · CALI</span>
+          </div>
+        </div>
+
       </div>
+
+      <!-- 4. Fullscreen Video Mode Caption (Appears once the video expands to 100vw x 100vh) -->
+      <div class="hero-fullscreen-caption absolute bottom-12 left-6 sm:left-16 z-30 opacity-0 pointer-events-auto max-w-xl">
+        <span class="section-tag-gold mb-3">Legal &amp; Business · Enfoque Estratégico</span>
+        <h2 class="font-serif text-2xl sm:text-4xl font-bold text-white leading-tight">
+          El derecho como motor de crecimiento y blindaje patrimonial.
+        </h2>
+        <p class="text-xs sm:text-sm text-slate-300 mt-2 font-light">
+          Bajo el liderazgo del Dr. Julián Fajardo, resolvemos contingencias de alto calibre en Negocios y Trabajo.
+        </p>
+        <div class="mt-4 flex items-center gap-3">
+          <a href="#enfoque" class="text-xs font-mono uppercase tracking-widest text-gold-300 hover:text-white flex items-center gap-1.5 transition-colors">
+            <span>Explorar Servicios</span> ↓
+          </a>
+        </div>
+      </div>
+
     </section>
 
     <!-- STRATEGIC APPROACH SECTION (Nuestra Filosofía Jurídica) -->

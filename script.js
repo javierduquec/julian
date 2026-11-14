@@ -20,6 +20,9 @@ try {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  initLenis();
+  initAwwwardsHero();
+  initMagneticFrostedButton();
   initSpykerPreloader();
   initSpykerScrollReveals();
   initMotionAnimations();
@@ -94,18 +97,11 @@ function initSpykerPreloader() {
           { opacity: [1, 0], scale: [1, 1.05] },
           { duration: 0.5, ease: [0.16, 1, 0.3, 1] }
         );
-
-        // Smooth Hero Entrance right as preloader dissolves
-        const heroCols = document.querySelectorAll('.hero-section .lg\\:col-span-7, .hero-section .lg\\:col-span-5');
-        heroCols.forEach((col, i) => {
-          window.Motion.animate(
-            col,
-            { opacity: [0, 1], y: [30, 0], scale: [0.975, 1] },
-            { duration: 0.8, delay: 0.1 + (i * 0.12), ease: [0.16, 1, 0.3, 1] }
-          );
-        });
       } catch (e) {}
     }
+
+    // Trigger Awwwards Hero Entrance (Text Reveal + Kinetic Mask Intro)
+    triggerHeroEntrance();
 
     // Safely remove the preloader overlay completely from DOM so it can never obscure the view
     setTimeout(() => {
@@ -166,6 +162,195 @@ function initSpykerScrollReveals() {
       }
     });
   }, { passive: true });
+}
+
+/* -------------------------------------------------------------
+ * 0.1 Lenis Smooth Scroll Engine (@studio-freight/lenis)
+ * ------------------------------------------------------------- */
+function initLenis() {
+  if (typeof Lenis === 'undefined') return;
+
+  const lenis = new Lenis({
+    duration: 1.2,
+    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    orientation: 'vertical',
+    gestureOrientation: 'vertical',
+    smoothWheel: true,
+    touchMultiplier: 1.5,
+  });
+
+  window.lenisInstance = lenis;
+
+  // Synchronize Lenis with GSAP ScrollTrigger
+  if (typeof ScrollTrigger !== 'undefined' && typeof gsap !== 'undefined') {
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add((time) => {
+      lenis.raf(time * 1000);
+    });
+    gsap.ticker.lagSmoothing(0);
+  } else {
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+  }
+}
+
+/* -------------------------------------------------------------
+ * 0.2 Awwwards-Level Kinetic Hero: Text Reveal & SVG Video Mask
+ * ------------------------------------------------------------- */
+function triggerHeroEntrance() {
+  if (typeof gsap === 'undefined') return;
+
+  // Mechanical Text Reveal: Lines slide up from beneath overflow:hidden with stagger 0.08s
+  gsap.fromTo(".hero-line-inner", 
+    { y: "115%" },
+    { y: "0%", duration: 1.15, ease: "power4.out", stagger: 0.08, delay: 0.1 }
+  );
+
+  // Mask intro focus
+  const maskGroup = document.getElementById('heroMaskScaleGroup');
+  if (maskGroup) {
+    gsap.fromTo(maskGroup,
+      { scale: 0.88, opacity: 0 },
+      { scale: 1, opacity: 1, duration: 1.3, ease: "power3.out" }
+    );
+  }
+
+  // Floating controls entrance
+  gsap.fromTo(".hero-ui-stagger",
+    { opacity: 0, y: 22 },
+    { opacity: 1, y: 0, duration: 0.85, stagger: 0.1, delay: 0.45, ease: "power3.out" }
+  );
+}
+
+function initAwwwardsHero() {
+  if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  const heroStage = document.getElementById('heroStage');
+  const maskGroup = document.getElementById('heroMaskScaleGroup');
+  const heroVideo = document.getElementById('heroVideo');
+
+  if (!heroStage || !maskGroup) return;
+
+  // Ensure video attempts autoplay
+  if (heroVideo) {
+    heroVideo.play().catch(() => {
+      heroVideo.muted = true;
+      heroVideo.play().catch(() => {});
+    });
+  }
+
+  // Master GSAP ScrollTrigger Timeline for Hero Zoom
+  const heroTL = gsap.timeline({
+    scrollTrigger: {
+      trigger: heroStage,
+      start: "top top",
+      end: "+=180%",
+      pin: true,
+      scrub: 1,
+      anticipatePin: 1,
+      invalidateOnRefresh: true
+    }
+  });
+
+  // A. Fade out UI badges, subtitle lines and buttons as scroll commences
+  heroTL.to(".hero-ui-fade", {
+    opacity: 0,
+    y: -35,
+    duration: 0.35,
+    ease: "power2.out"
+  }, 0);
+
+  // B. Enormously scale the SVG text mask with ease: "power3.inOut" to reveal 100vw and 100vh full-screen video
+  heroTL.to(maskGroup, {
+    scale: 75,
+    transformOrigin: "960px 540px",
+    ease: "power3.inOut",
+    duration: 1
+  }, 0);
+
+  // C. Soften the dark video tint as it expands into full cinema mode
+  heroTL.to(".hero-video-tint", {
+    opacity: 0.2,
+    duration: 0.5,
+    ease: "power2.inOut"
+  }, 0.4);
+
+  // D. Fullscreen cinematic caption smoothly reveals once video is completely unveiled
+  heroTL.fromTo(".hero-fullscreen-caption", 
+    { opacity: 0, y: 35 },
+    { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" },
+    0.65
+  );
+}
+
+/* -------------------------------------------------------------
+ * 0.3 Magnetic Frosted Glass Button Physics
+ * ------------------------------------------------------------- */
+function initMagneticFrostedButton() {
+  const btn = document.getElementById('heroMagneticBtn');
+  if (!btn || typeof gsap === 'undefined') return;
+
+  window.addEventListener('mousemove', (e) => {
+    const rect = btn.getBoundingClientRect();
+    const btnCenterX = rect.left + rect.width / 2;
+    const btnCenterY = rect.top + rect.height / 2;
+
+    const distX = e.clientX - btnCenterX;
+    const distY = e.clientY - btnCenterY;
+    const distance = Math.hypot(distX, distY);
+
+    // Magnetic proximity attraction radius (180px)
+    if (distance < 180) {
+      const pull = (180 - distance) / 180;
+      gsap.to(btn, {
+        x: distX * 0.32 * pull,
+        y: distY * 0.32 * pull,
+        duration: 0.35,
+        ease: "power2.out",
+        overwrite: "auto"
+      });
+    } else {
+      gsap.to(btn, {
+        x: 0,
+        y: 0,
+        duration: 0.7,
+        ease: "elastic.out(1, 0.45)",
+        overwrite: "auto"
+      });
+    }
+  });
+
+  btn.addEventListener('mouseleave', () => {
+    gsap.to(btn, {
+      x: 0,
+      y: 0,
+      duration: 0.7,
+      ease: "elastic.out(1, 0.45)",
+      overwrite: "auto"
+    });
+  });
+
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    const video = document.getElementById('heroVideo');
+    const soundIndicator = btn.querySelector('.sound-indicator');
+    if (video) {
+      video.muted = !video.muted;
+      if (soundIndicator) {
+        soundIndicator.textContent = video.muted ? '🔇' : '🔊';
+      }
+    }
+
+    // Smoothly scroll down to the full-screen video stage view via Lenis
+    if (window.lenisInstance) {
+      window.lenisInstance.scrollTo('#heroStage', { offset: window.innerHeight * 0.9, duration: 1.5 });
+    }
+  });
 }
 
 /* -------------------------------------------------------------
@@ -520,14 +705,18 @@ function initSmoothScroll() {
       const targetElement = document.querySelector(targetId);
       if (targetElement) {
         e.preventDefault();
-        const headerOffset = 85;
-        const elementPosition = targetElement.getBoundingClientRect().top;
-        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+        if (window.lenisInstance) {
+          window.lenisInstance.scrollTo(targetElement, { offset: -85, duration: 1.2 });
+        } else {
+          const headerOffset = 85;
+          const elementPosition = targetElement.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
 
-        window.scrollTo({
-          top: offsetPosition,
-          behavior: 'smooth'
-        });
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          });
+        }
       }
     });
   });
