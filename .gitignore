@@ -4,6 +4,7 @@ node_modules/
 # Agent skills, caches & temp tools
 .*
 !.gitignore
+!.nojekyll
 data/
 skills/
 skills-lock.json
