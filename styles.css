@@ -394,7 +394,7 @@ body {
 /* Fullscreen Video Caption */
 .hero-fullscreen-caption {
   pointer-events: auto;
-  transition: opacity 0.5s ease, transform 0.5s ease;
+  will-change: opacity, transform;
 }
 
 /* --- Hero Section Nuances --- */

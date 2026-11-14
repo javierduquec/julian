@@ -103,10 +103,18 @@ function initSpykerPreloader() {
     // Trigger Awwwards Hero Entrance (Text Reveal + Kinetic Mask Intro)
     triggerHeroEntrance();
 
+    // Recalculate ScrollTrigger measurements once layout is active
+    if (typeof ScrollTrigger !== 'undefined') {
+      ScrollTrigger.refresh();
+    }
+
     // Safely remove the preloader overlay completely from DOM so it can never obscure the view
     setTimeout(() => {
       if (preloader.parentNode) {
         preloader.parentNode.removeChild(preloader);
+      }
+      if (typeof ScrollTrigger !== 'undefined') {
+        ScrollTrigger.refresh();
       }
     }, 550);
   }
@@ -239,13 +247,14 @@ function initAwwwardsHero() {
   }
 
   // Master GSAP ScrollTrigger Timeline for Hero Zoom
+  // end: "+=45%" makes the transition quick, responsive, and seamless (no black void gap)
   const heroTL = gsap.timeline({
     scrollTrigger: {
       trigger: heroStage,
       start: "top top",
-      end: "+=180%",
+      end: "+=45%",
       pin: true,
-      scrub: 1,
+      scrub: 0.4,
       anticipatePin: 1,
       invalidateOnRefresh: true
     }
@@ -254,31 +263,38 @@ function initAwwwardsHero() {
   // A. Fade out UI badges, subtitle lines and buttons as scroll commences
   heroTL.to(".hero-ui-fade", {
     opacity: 0,
-    y: -35,
-    duration: 0.35,
+    y: -25,
+    duration: 0.2,
     ease: "power2.out"
   }, 0);
 
-  // B. Enormously scale the SVG text mask with ease: "power3.inOut" to reveal 100vw and 100vh full-screen video
+  // B. Enormously scale the SVG text mask smoothly
   heroTL.to(maskGroup, {
-    scale: 75,
+    scale: 14,
     transformOrigin: "960px 540px",
-    ease: "power3.inOut",
-    duration: 1
+    ease: "power2.inOut",
+    duration: 0.65
   }, 0);
 
-  // C. Soften the dark video tint as it expands into full cinema mode
+  // C. DISSOLVE THE SVG MASK: Revealing the full-screen video with ZERO black void!
+  heroTL.to(".hero-mask-svg", {
+    opacity: 0,
+    duration: 0.35,
+    ease: "power2.inOut"
+  }, 0.1);
+
+  // D. Soften the dark video tint to keep high clarity while maintaining subtitle contrast
   heroTL.to(".hero-video-tint", {
     opacity: 0.2,
-    duration: 0.5,
-    ease: "power2.inOut"
-  }, 0.4);
+    duration: 0.4,
+    ease: "power2.out"
+  }, 0.1);
 
-  // D. Fullscreen cinematic caption smoothly reveals once video is completely unveiled
+  // E. Fullscreen cinematic caption smoothly reveals immediately as video expands
   heroTL.fromTo(".hero-fullscreen-caption", 
-    { opacity: 0, y: 35 },
-    { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" },
-    0.65
+    { opacity: 0, y: 25 },
+    { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" },
+    0.18
   );
 }
 
@@ -342,7 +358,7 @@ function initMagneticFrostedButton() {
 
     // Smoothly scroll down to the full-screen video stage view via Lenis
     if (window.lenisInstance) {
-      window.lenisInstance.scrollTo('#heroStage', { offset: window.innerHeight * 0.9, duration: 1.5 });
+      window.lenisInstance.scrollTo('#heroStage', { offset: window.innerHeight * 0.4, duration: 1.0 });
     }
   });
 }
