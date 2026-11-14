@@ -203,12 +203,6 @@ function initLenis() {
 function triggerHeroEntrance() {
   if (typeof gsap === 'undefined') return;
 
-  // Mechanical Text Reveal: Lines slide up from beneath overflow:hidden with stagger 0.08s
-  gsap.fromTo(".hero-line-inner", 
-    { y: "115%" },
-    { y: "0%", duration: 1.15, ease: "power4.out", stagger: 0.08, delay: 0.1 }
-  );
-
   // Mask intro focus
   const maskGroup = document.getElementById('heroMaskScaleGroup');
   if (maskGroup) {
@@ -218,10 +212,10 @@ function triggerHeroEntrance() {
     );
   }
 
-  // Floating controls entrance
-  gsap.fromTo(".hero-ui-stagger",
-    { opacity: 0, y: 22 },
-    { opacity: 1, y: 0, duration: 0.85, stagger: 0.1, delay: 0.45, ease: "power3.out" }
+  // Floating branding and controls entrance
+  gsap.fromTo(".hero-ui-fade",
+    { opacity: 0, y: 18 },
+    { opacity: 1, y: 0, duration: 0.85, stagger: 0.1, delay: 0.2, ease: "power3.out" }
   );
 }
 
