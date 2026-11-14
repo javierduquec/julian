@@ -20,6 +20,8 @@ try {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  initSpykerPreloader();
+  initSpykerScrollReveals();
   initMotionAnimations();
   initMobileMenu();
   initHeaderScroll();
@@ -30,6 +32,153 @@ document.addEventListener('DOMContentLoaded', () => {
   initMagneticButtons();
   initClickRipples();
 });
+
+/* -------------------------------------------------------------
+ * 0. Spyker Cars Inspired Preloader & Scroll Revealer (spykercars.com)
+ * ------------------------------------------------------------- */
+function initSpykerPreloader() {
+  const preloader = document.getElementById('spykerPreloader');
+  const fillWrap = document.getElementById('preloaderFillWrap');
+  const percentEl = document.getElementById('preloaderPercent');
+  const barEl = document.getElementById('preloaderBar');
+
+  if (!preloader) return;
+
+  // Lock scrolling during preloader phase
+  document.body.classList.add('overflow-hidden');
+
+  let currentPercent = 0;
+  const targetPercent = 100;
+  const duration = 1350; // ~1.35s luxury pacing
+  const startTime = performance.now();
+
+  function step(now) {
+    const elapsed = now - startTime;
+    const progressRatio = Math.min(elapsed / duration, 1);
+    
+    // Smooth cubic ease out curve
+    const easeProgress = 1 - Math.pow(1 - progressRatio, 3);
+    currentPercent = Math.min(Math.floor(easeProgress * targetPercent), 100);
+
+    // Liquid fill wipe from bottom to top: clip-path inset(top% right bottom left)
+    const insetTop = 100 - currentPercent;
+    if (fillWrap) {
+      fillWrap.style.clipPath = `inset(${insetTop}% 0 0 0)`;
+    }
+    if (percentEl) {
+      percentEl.textContent = `${currentPercent}%`;
+    }
+    if (barEl) {
+      barEl.style.width = `${currentPercent}%`;
+    }
+
+    if (progressRatio < 1) {
+      requestAnimationFrame(step);
+    } else {
+      setTimeout(() => {
+        dismissPreloader();
+      }, 180);
+    }
+  }
+
+  requestAnimationFrame(step);
+
+  function dismissPreloader() {
+    document.body.classList.remove('overflow-hidden');
+
+    if (typeof window.Motion !== 'undefined' && window.Motion.animate) {
+      window.Motion.animate(
+        preloader,
+        {
+          opacity: [1, 0],
+          scale: [1, 1.05],
+          filter: ['blur(0px)', 'blur(8px)']
+        },
+        { duration: 0.65, ease: [0.16, 1, 0.3, 1] }
+      ).finished.then(() => {
+        preloader.classList.add('preloader-hidden');
+        preloader.style.display = 'none';
+      });
+    } else {
+      preloader.classList.add('preloader-hidden');
+      setTimeout(() => {
+        preloader.style.display = 'none';
+      }, 650);
+    }
+  }
+}
+
+function initSpykerScrollReveals() {
+  const hasMotion = typeof window.Motion !== 'undefined';
+
+  if (!hasMotion) {
+    document.querySelectorAll('.spyker-reveal, .spyker-stagger-item').forEach(el => {
+      el.style.opacity = '1';
+      el.style.transform = 'none';
+      el.style.filter = 'none';
+    });
+    return;
+  }
+
+  const { animate, inView, stagger } = window.Motion;
+
+  // 1. Standalone 3D Window & Section Emergence (spykercars.com effect)
+  inView('.spyker-reveal', (info) => {
+    animate(
+      info.target,
+      {
+        opacity: [0, 1],
+        transform: [
+          'perspective(1200px) translateY(45px) rotateX(4deg) scale(0.96)',
+          'perspective(1200px) translateY(0px) rotateX(0deg) scale(1)'
+        ],
+        filter: ['blur(6px)', 'blur(0px)']
+      },
+      {
+        duration: 0.85,
+        easing: [0.16, 1, 0.3, 1]
+      }
+    );
+  }, { margin: "-60px 0px" });
+
+  // 2. Cascade Stagger for Spyker Groups (Cards, Lists, Grids)
+  inView('.spyker-stagger-group', (info) => {
+    const items = info.target.querySelectorAll('.spyker-stagger-item');
+    if (items.length > 0) {
+      animate(
+        items,
+        {
+          opacity: [0, 1],
+          transform: [
+            'perspective(1200px) translateY(35px) scale(0.96)',
+            'perspective(1200px) translateY(0px) scale(1)'
+          ],
+          filter: ['blur(4px)', 'blur(0px)']
+        },
+        {
+          delay: stagger(0.09, { start: 0.08 }),
+          duration: 0.75,
+          easing: [0.16, 1, 0.3, 1]
+        }
+      );
+    }
+  }, { margin: "-50px 0px" });
+
+  // 3. Focal Glow on Scroll for Cards
+  const glowCards = document.querySelectorAll('.spyker-card-glow');
+  glowCards.forEach(card => {
+    inView(card, (info) => {
+      info.target.classList.add('in-focus');
+      const timer = setTimeout(() => {
+        info.target.classList.remove('in-focus');
+      }, 1500);
+      return () => {
+        clearTimeout(timer);
+        info.target.classList.remove('in-focus');
+      };
+    }, { margin: "-10% 0px -10% 0px" });
+  });
+}
 
 /* -------------------------------------------------------------
  * 1. Motion Library Spring Dynamics & Micro-Interactions
@@ -73,9 +222,9 @@ function initMotionAnimations() {
     });
   });
 
-  // 1.4 Staggered In-View Entrance Animations
-  inView('.reveal-group', (info) => {
-    const items = info.target.querySelectorAll('.reveal-item');
+  // 1.4 Staggered In-View Entrance Animations for non-spyker legacy elements
+  inView('.reveal-group:not(.spyker-stagger-group)', (info) => {
+    const items = info.target.querySelectorAll('.reveal-item:not(.spyker-stagger-item)');
     if (items.length > 0) {
       animate(items, { opacity: [0, 1], y: [28, 0] }, {
         delay: stagger(0.08),
@@ -86,8 +235,8 @@ function initMotionAnimations() {
     }
   }, { margin: "-60px" });
 
-  // 1.5 Section Entrance Elements
-  inView('[data-motion="fade-up"]', (info) => {
+  // 1.5 Section Entrance Elements for non-spyker legacy elements
+  inView('[data-motion="fade-up"]:not(.spyker-reveal)', (info) => {
     animate(info.target, { opacity: [0, 1], y: [30, 0] }, {
       type: "spring",
       stiffness: 220,

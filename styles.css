@@ -870,3 +870,66 @@ header, main, footer, .top-bar, .floating-btn-whatsapp {
   display: inline-block;
   will-change: transform, opacity;
 }
+
+
+/* ==========================================================================
+   SPYKER CARS INSPIRED PRELOADER & SCROLLYTELLING ANIMATIONS (spykercars.com)
+   Logo Liquid Filling, 3D Window Emergence & Cinematic Scroll Reveals
+   ========================================================================== */
+
+/* Preloader Overlay */
+#spykerPreloader {
+  background: radial-gradient(circle at center, #070F1E 0%, #02050A 85%);
+  backdrop-filter: blur(25px);
+  will-change: opacity, transform;
+}
+
+#spykerPreloader.preloader-hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(1.04);
+}
+
+/* Preloader Logo Fill Wrap */
+#preloaderFillWrap {
+  transition: clip-path 0.08s ease-out;
+  will-change: clip-path;
+}
+
+/* Spyker 3D Emergence & Window Scroll Reveals */
+.spyker-reveal {
+  opacity: 0;
+  transform: perspective(1200px) translateY(45px) rotateX(4deg) scale(0.96);
+  filter: blur(6px);
+  will-change: transform, opacity, filter;
+}
+
+.spyker-stagger-item {
+  opacity: 0;
+  transform: perspective(1200px) translateY(35px) scale(0.96);
+  filter: blur(4px);
+  will-change: transform, opacity, filter;
+}
+
+/* Card Glow on Scroll Focus */
+.spyker-card-glow {
+  transition: box-shadow 0.4s ease, border-color 0.4s ease;
+}
+
+.spyker-card-glow.in-focus {
+  border-color: rgba(212, 175, 119, 0.5) !important;
+  box-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.8), 0 0 35px -5px rgba(212, 175, 119, 0.25) !important;
+}
+
+/* Accessibility: graceful fallback for reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .spyker-reveal,
+  .spyker-stagger-item {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+  #spykerPreloader {
+    display: none !important;
+  }
+}
