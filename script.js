@@ -49,7 +49,7 @@ function initSpykerPreloader() {
 
   let currentPercent = 0;
   const targetPercent = 100;
-  const duration = 1350; // ~1.35s luxury pacing
+  const duration = 1300; // ~1.3s luxury pacing
   const startTime = performance.now();
 
   function step(now) {
@@ -77,7 +77,7 @@ function initSpykerPreloader() {
     } else {
       setTimeout(() => {
         dismissPreloader();
-      }, 180);
+      }, 150);
     }
   }
 
@@ -85,99 +85,114 @@ function initSpykerPreloader() {
 
   function dismissPreloader() {
     document.body.classList.remove('overflow-hidden');
+    preloader.classList.add('preloader-hidden');
 
     if (typeof window.Motion !== 'undefined' && window.Motion.animate) {
-      window.Motion.animate(
-        preloader,
-        {
-          opacity: [1, 0],
-          scale: [1, 1.05],
-          filter: ['blur(0px)', 'blur(8px)']
-        },
-        { duration: 0.65, ease: [0.16, 1, 0.3, 1] }
-      ).finished.then(() => {
-        preloader.classList.add('preloader-hidden');
-        preloader.style.display = 'none';
-      });
-    } else {
-      preloader.classList.add('preloader-hidden');
-      setTimeout(() => {
-        preloader.style.display = 'none';
-      }, 650);
+      try {
+        window.Motion.animate(
+          preloader,
+          {
+            opacity: [1, 0],
+            scale: [1, 1.05]
+          },
+          { duration: 0.6, ease: [0.16, 1, 0.3, 1] }
+        );
+      } catch (e) {
+        // Fallback handled by CSS .preloader-hidden
+      }
     }
+
+    setTimeout(() => {
+      preloader.style.display = 'none';
+      // Ensure all Hero elements are fully revealed immediately
+      document.querySelectorAll('#hero .spyker-reveal, #hero .spyker-stagger-item, header .spyker-reveal').forEach(el => {
+        el.classList.remove('spyker-pending');
+        el.classList.add('spyker-revealed');
+      });
+    }, 600);
   }
 }
 
 function initSpykerScrollReveals() {
-  const hasMotion = typeof window.Motion !== 'undefined';
+  const revealElements = document.querySelectorAll('.spyker-reveal, .spyker-stagger-item');
+  if (revealElements.length === 0) return;
 
-  if (!hasMotion) {
-    document.querySelectorAll('.spyker-reveal, .spyker-stagger-item').forEach(el => {
-      el.style.opacity = '1';
-      el.style.transform = 'none';
-      el.style.filter = 'none';
-    });
-    return;
-  }
-
-  const { animate, inView, stagger } = window.Motion;
-
-  // 1. Standalone 3D Window & Section Emergence (spykercars.com effect)
-  inView('.spyker-reveal', (info) => {
-    animate(
-      info.target,
-      {
-        opacity: [0, 1],
-        transform: [
-          'perspective(1200px) translateY(45px) rotateX(4deg) scale(0.96)',
-          'perspective(1200px) translateY(0px) rotateX(0deg) scale(1)'
-        ],
-        filter: ['blur(6px)', 'blur(0px)']
-      },
-      {
-        duration: 0.85,
-        easing: [0.16, 1, 0.3, 1]
-      }
-    );
-  }, { margin: "-60px 0px" });
-
-  // 2. Cascade Stagger for Spyker Groups (Cards, Lists, Grids)
-  inView('.spyker-stagger-group', (info) => {
-    const items = info.target.querySelectorAll('.spyker-stagger-item');
-    if (items.length > 0) {
-      animate(
-        items,
-        {
-          opacity: [0, 1],
-          transform: [
-            'perspective(1200px) translateY(35px) scale(0.96)',
-            'perspective(1200px) translateY(0px) scale(1)'
-          ],
-          filter: ['blur(4px)', 'blur(0px)']
-        },
-        {
-          delay: stagger(0.09, { start: 0.08 }),
-          duration: 0.75,
-          easing: [0.16, 1, 0.3, 1]
-        }
-      );
+  // 1. Initial Fold Check: Elements in or near initial viewport appear immediately
+  const windowHeight = window.innerHeight || 800;
+  revealElements.forEach(el => {
+    const rect = el.getBoundingClientRect();
+    if (rect.top < windowHeight * 0.9) {
+      el.classList.add('spyker-revealed');
+    } else {
+      el.classList.add('spyker-pending');
     }
-  }, { margin: "-50px 0px" });
+  });
+
+  // 2. IntersectionObserver for cinematic scroll emergence
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries, obs) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const el = entry.target;
+          el.classList.remove('spyker-pending');
+          el.classList.add('spyker-revealed');
+
+          if (typeof window.Motion !== 'undefined' && window.Motion.animate) {
+            try {
+              window.Motion.animate(
+                el,
+                {
+                  opacity: [0, 1],
+                  y: [35, 0],
+                  scale: [0.97, 1]
+                },
+                {
+                  duration: 0.75,
+                  ease: [0.16, 1, 0.3, 1]
+                }
+              );
+            } catch (err) {
+              // Graceful CSS transition via .spyker-revealed
+            }
+          }
+
+          obs.unobserve(el);
+        }
+      });
+    }, {
+      rootMargin: '0px 0px -40px 0px',
+      threshold: 0.05
+    });
+
+    revealElements.forEach(el => {
+      if (el.classList.contains('spyker-pending')) {
+        observer.observe(el);
+      }
+    });
+  } else {
+    // Fallback: reveal all immediately if IntersectionObserver is unsupported
+    revealElements.forEach(el => {
+      el.classList.remove('spyker-pending');
+      el.classList.add('spyker-revealed');
+    });
+  }
 
   // 3. Focal Glow on Scroll for Cards
   const glowCards = document.querySelectorAll('.spyker-card-glow');
-  glowCards.forEach(card => {
-    inView(card, (info) => {
-      info.target.classList.add('in-focus');
-      const timer = setTimeout(() => {
-        info.target.classList.remove('in-focus');
-      }, 1500);
-      return () => {
-        clearTimeout(timer);
-        info.target.classList.remove('in-focus');
-      };
-    }, { margin: "-10% 0px -10% 0px" });
-  });
+  if ('IntersectionObserver' in window) {
+    const glowObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in-focus');
+          setTimeout(() => {
+            entry.target.classList.remove('in-focus');
+          }, 1400);
+        }
+      });
+    }, { rootMargin: '-15% 0px -15% 0px' });
+
+    glowCards.forEach(card => glowObserver.observe(card));
+  }
 }
 
 /* -------------------------------------------------------------

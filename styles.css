@@ -898,17 +898,36 @@ header, main, footer, .top-bar, .floating-btn-whatsapp {
 
 /* Spyker 3D Emergence & Window Scroll Reveals */
 .spyker-reveal {
-  opacity: 0;
-  transform: perspective(1200px) translateY(45px) rotateX(4deg) scale(0.96);
-  filter: blur(6px);
+  opacity: 1;
+  transform: perspective(1200px) translateY(0) scale(1);
+  filter: blur(0px);
+  transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1), 
+              transform 0.75s cubic-bezier(0.16, 1, 0.3, 1), 
+              filter 0.75s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: transform, opacity, filter;
 }
 
 .spyker-stagger-item {
-  opacity: 0;
-  transform: perspective(1200px) translateY(35px) scale(0.96);
-  filter: blur(4px);
+  opacity: 1;
+  transform: perspective(1200px) translateY(0) scale(1);
+  filter: blur(0px);
+  transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), 
+              transform 0.65s cubic-bezier(0.16, 1, 0.3, 1), 
+              filter 0.65s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: transform, opacity, filter;
+}
+
+/* Pending state applied dynamically only to offscreen elements */
+.spyker-pending {
+  opacity: 0 !important;
+  transform: perspective(1200px) translateY(38px) scale(0.97) !important;
+  filter: blur(5px) !important;
+}
+
+.spyker-revealed {
+  opacity: 1 !important;
+  transform: perspective(1200px) translateY(0) scale(1) !important;
+  filter: blur(0px) !important;
 }
 
 /* Card Glow on Scroll Focus */
