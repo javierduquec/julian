@@ -896,14 +896,26 @@ header, main, footer, .top-bar, .floating-btn-whatsapp {
   will-change: clip-path;
 }
 
-/* Spyker 3D Emergence & Window Scroll Reveals (Always Visible & Accessible) */
-.spyker-reveal,
-.spyker-stagger-item {
-  opacity: 1 !important;
-  transform: none;
-  filter: none;
-  transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease, border-color 0.4s ease;
-  will-change: transform;
+/* ==========================================================================
+   SPYKER CARS CINEMATIC SCROLL REVEALS (spykercars.com)
+   3D Perspective Pitch, Progressive Scale, Blur Clearance & Stagger
+   ========================================================================== */
+.spyker-scroll-item {
+  opacity: 0;
+  transform: perspective(1200px) translateY(55px) rotateX(4deg) scale(0.95);
+  filter: blur(6px);
+  transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+              filter 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.5s ease,
+              border-color 0.5s ease;
+  will-change: opacity, transform, filter;
+}
+
+.spyker-scroll-item.is-visible {
+  opacity: 1;
+  transform: perspective(1200px) translateY(0px) rotateX(0deg) scale(1);
+  filter: blur(0px);
 }
 
 /* Card Glow on Scroll Focus */
@@ -911,18 +923,18 @@ header, main, footer, .top-bar, .floating-btn-whatsapp {
   transition: box-shadow 0.4s ease, border-color 0.4s ease;
 }
 
-.spyker-card-glow.in-focus {
-  border-color: rgba(212, 175, 119, 0.5) !important;
-  box-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.8), 0 0 35px -5px rgba(212, 175, 119, 0.25) !important;
+.spyker-scroll-item.is-visible.spyker-card-glow {
+  box-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.8), 0 0 25px -5px rgba(212, 175, 119, 0.22) !important;
+  border-color: rgba(212, 175, 119, 0.45) !important;
 }
 
 /* Accessibility: graceful fallback for reduced motion preference */
 @media (prefers-reduced-motion: reduce) {
-  .spyker-reveal,
-  .spyker-stagger-item {
+  .spyker-scroll-item {
     opacity: 1 !important;
     transform: none !important;
     filter: none !important;
+    transition: none !important;
   }
   #spykerPreloader {
     display: none !important;

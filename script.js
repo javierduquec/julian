@@ -94,6 +94,16 @@ function initSpykerPreloader() {
           { opacity: [1, 0], scale: [1, 1.05] },
           { duration: 0.5, ease: [0.16, 1, 0.3, 1] }
         );
+
+        // Smooth Hero Entrance right as preloader dissolves
+        const heroCols = document.querySelectorAll('.hero-section .lg\\:col-span-7, .hero-section .lg\\:col-span-5');
+        heroCols.forEach((col, i) => {
+          window.Motion.animate(
+            col,
+            { opacity: [0, 1], y: [30, 0], scale: [0.975, 1] },
+            { duration: 0.8, delay: 0.1 + (i * 0.12), ease: [0.16, 1, 0.3, 1] }
+          );
+        });
       } catch (e) {}
     }
 
@@ -107,47 +117,55 @@ function initSpykerPreloader() {
 }
 
 function initSpykerScrollReveals() {
-  if (!('IntersectionObserver' in window)) return;
+  const scrollItems = document.querySelectorAll('.spyker-scroll-item');
+  if (scrollItems.length === 0) return;
 
-  const revealCards = document.querySelectorAll('.pillar-card, .service-detail-card, .case-card, .faq-item, .spyker-reveal');
-  
-  const observer = new IntersectionObserver((entries, obs) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const el = entry.target;
-        if (typeof window.Motion !== 'undefined' && window.Motion.animate) {
-          try {
-            window.Motion.animate(
-              el,
-              { y: [22, 0], scale: [0.985, 1] },
-              { duration: 0.6, ease: [0.16, 1, 0.3, 1] }
-            );
-          } catch (err) {}
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries, obs) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const el = entry.target;
+          const delay = el.dataset.spykerDelay ? parseFloat(el.dataset.spykerDelay) : 0;
+          
+          if (delay > 0) {
+            setTimeout(() => {
+              el.classList.add('is-visible');
+            }, delay * 1000);
+          } else {
+            el.classList.add('is-visible');
+          }
+
+          obs.unobserve(el);
         }
-        obs.unobserve(el);
+      });
+    }, {
+      rootMargin: '0px 0px -40px 0px',
+      threshold: 0.08
+    });
+
+    scrollItems.forEach(item => observer.observe(item));
+  } else {
+    // Immediate fallback if IntersectionObserver is unsupported
+    scrollItems.forEach(item => item.classList.add('is-visible'));
+  }
+
+  // Viewport scroll verification: activates any items crossing into view during fast scrolling
+  window.addEventListener('scroll', () => {
+    const vh = window.innerHeight;
+    document.querySelectorAll('.spyker-scroll-item:not(.is-visible)').forEach(item => {
+      const rect = item.getBoundingClientRect();
+      if (rect.top < vh - 20 && rect.bottom > 0) {
+        const delay = item.dataset.spykerDelay ? parseFloat(item.dataset.spykerDelay) : 0;
+        if (delay > 0) {
+          setTimeout(() => {
+            item.classList.add('is-visible');
+          }, delay * 1000);
+        } else {
+          item.classList.add('is-visible');
+        }
       }
     });
-  }, {
-    rootMargin: '0px 0px -40px 0px',
-    threshold: 0.08
-  });
-
-  revealCards.forEach(card => observer.observe(card));
-
-  // Focal Glow on Scroll for Cards
-  const glowCards = document.querySelectorAll('.spyker-card-glow');
-  const glowObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('in-focus');
-        setTimeout(() => {
-          entry.target.classList.remove('in-focus');
-        }, 1300);
-      }
-    });
-  }, { rootMargin: '-10% 0px -10% 0px' });
-
-  glowCards.forEach(card => glowObserver.observe(card));
+  }, { passive: true });
 }
 
 /* -------------------------------------------------------------
@@ -543,6 +561,14 @@ function switchPracticeTab(tab) {
 
   hideContent.classList.add('hidden');
   targetContent.classList.remove('hidden');
+
+  // Stagger emergence for the newly revealed tab cards
+  targetContent.querySelectorAll('.spyker-scroll-item').forEach((item, idx) => {
+    item.classList.remove('is-visible');
+    setTimeout(() => {
+      item.classList.add('is-visible');
+    }, 40 + (idx * 60));
+  });
 
   if (typeof window.Motion !== 'undefined') {
     window.Motion.animate(targetContent, { opacity: [0, 1], y: [16, 0] }, {
