@@ -44,12 +44,12 @@ function initSpykerPreloader() {
 
   if (!preloader) return;
 
-  // Lock scrolling during preloader phase
+  // Prevent scroll temporarily while logo fills
   document.body.classList.add('overflow-hidden');
 
   let currentPercent = 0;
   const targetPercent = 100;
-  const duration = 1300; // ~1.3s luxury pacing
+  const duration = 1200; // 1.2s smooth luxury pacing
   const startTime = performance.now();
 
   function step(now) {
@@ -60,7 +60,7 @@ function initSpykerPreloader() {
     const easeProgress = 1 - Math.pow(1 - progressRatio, 3);
     currentPercent = Math.min(Math.floor(easeProgress * targetPercent), 100);
 
-    // Liquid fill wipe from bottom to top: clip-path inset(top% right bottom left)
+    // Liquid fill wipe from bottom to top
     const insetTop = 100 - currentPercent;
     if (fillWrap) {
       fillWrap.style.clipPath = `inset(${insetTop}% 0 0 0)`;
@@ -75,9 +75,7 @@ function initSpykerPreloader() {
     if (progressRatio < 1) {
       requestAnimationFrame(step);
     } else {
-      setTimeout(() => {
-        dismissPreloader();
-      }, 150);
+      setTimeout(dismissPreloader, 100);
     }
   }
 
@@ -86,113 +84,70 @@ function initSpykerPreloader() {
   function dismissPreloader() {
     document.body.classList.remove('overflow-hidden');
     preloader.classList.add('preloader-hidden');
+    preloader.style.opacity = '0';
+    preloader.style.pointerEvents = 'none';
 
     if (typeof window.Motion !== 'undefined' && window.Motion.animate) {
       try {
         window.Motion.animate(
           preloader,
-          {
-            opacity: [1, 0],
-            scale: [1, 1.05]
-          },
-          { duration: 0.6, ease: [0.16, 1, 0.3, 1] }
+          { opacity: [1, 0], scale: [1, 1.05] },
+          { duration: 0.5, ease: [0.16, 1, 0.3, 1] }
         );
-      } catch (e) {
-        // Fallback handled by CSS .preloader-hidden
-      }
+      } catch (e) {}
     }
 
+    // Safely remove the preloader overlay completely from DOM so it can never obscure the view
     setTimeout(() => {
-      preloader.style.display = 'none';
-      // Ensure all Hero elements are fully revealed immediately
-      document.querySelectorAll('#hero .spyker-reveal, #hero .spyker-stagger-item, header .spyker-reveal').forEach(el => {
-        el.classList.remove('spyker-pending');
-        el.classList.add('spyker-revealed');
-      });
-    }, 600);
+      if (preloader.parentNode) {
+        preloader.parentNode.removeChild(preloader);
+      }
+    }, 550);
   }
 }
 
 function initSpykerScrollReveals() {
-  const revealElements = document.querySelectorAll('.spyker-reveal, .spyker-stagger-item');
-  if (revealElements.length === 0) return;
+  if (!('IntersectionObserver' in window)) return;
 
-  // 1. Initial Fold Check: Elements in or near initial viewport appear immediately
-  const windowHeight = window.innerHeight || 800;
-  revealElements.forEach(el => {
-    const rect = el.getBoundingClientRect();
-    if (rect.top < windowHeight * 0.9) {
-      el.classList.add('spyker-revealed');
-    } else {
-      el.classList.add('spyker-pending');
-    }
-  });
-
-  // 2. IntersectionObserver for cinematic scroll emergence
-  if ('IntersectionObserver' in window) {
-    const observer = new IntersectionObserver((entries, obs) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const el = entry.target;
-          el.classList.remove('spyker-pending');
-          el.classList.add('spyker-revealed');
-
-          if (typeof window.Motion !== 'undefined' && window.Motion.animate) {
-            try {
-              window.Motion.animate(
-                el,
-                {
-                  opacity: [0, 1],
-                  y: [35, 0],
-                  scale: [0.97, 1]
-                },
-                {
-                  duration: 0.75,
-                  ease: [0.16, 1, 0.3, 1]
-                }
-              );
-            } catch (err) {
-              // Graceful CSS transition via .spyker-revealed
-            }
-          }
-
-          obs.unobserve(el);
+  const revealCards = document.querySelectorAll('.pillar-card, .service-detail-card, .case-card, .faq-item, .spyker-reveal');
+  
+  const observer = new IntersectionObserver((entries, obs) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const el = entry.target;
+        if (typeof window.Motion !== 'undefined' && window.Motion.animate) {
+          try {
+            window.Motion.animate(
+              el,
+              { y: [22, 0], scale: [0.985, 1] },
+              { duration: 0.6, ease: [0.16, 1, 0.3, 1] }
+            );
+          } catch (err) {}
         }
-      });
-    }, {
-      rootMargin: '0px 0px -40px 0px',
-      threshold: 0.05
-    });
-
-    revealElements.forEach(el => {
-      if (el.classList.contains('spyker-pending')) {
-        observer.observe(el);
+        obs.unobserve(el);
       }
     });
-  } else {
-    // Fallback: reveal all immediately if IntersectionObserver is unsupported
-    revealElements.forEach(el => {
-      el.classList.remove('spyker-pending');
-      el.classList.add('spyker-revealed');
-    });
-  }
+  }, {
+    rootMargin: '0px 0px -40px 0px',
+    threshold: 0.08
+  });
 
-  // 3. Focal Glow on Scroll for Cards
+  revealCards.forEach(card => observer.observe(card));
+
+  // Focal Glow on Scroll for Cards
   const glowCards = document.querySelectorAll('.spyker-card-glow');
-  if ('IntersectionObserver' in window) {
-    const glowObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('in-focus');
-          setTimeout(() => {
-            entry.target.classList.remove('in-focus');
-          }, 1400);
-        }
-      });
-    }, { rootMargin: '-15% 0px -15% 0px' });
+  const glowObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in-focus');
+        setTimeout(() => {
+          entry.target.classList.remove('in-focus');
+        }, 1300);
+      }
+    });
+  }, { rootMargin: '-10% 0px -10% 0px' });
 
-    glowCards.forEach(card => glowObserver.observe(card));
-  }
+  glowCards.forEach(card => glowObserver.observe(card));
 }
 
 /* -------------------------------------------------------------
